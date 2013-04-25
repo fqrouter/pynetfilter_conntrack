@@ -6,7 +6,6 @@ from pynetfilter_conntrack import \
     NFCT_O_DEFAULT, NFCT_O_XML, NFCT_OF_SHOW_LAYER3,\
     ATTRIBUTES, NFCT_Q_UPDATE, PF_INET, PF_INET6,\
     NFCT_Q_CREATE, NFCT_Q_DESTROY,\
-    nfct_conntrack_compare_t, nfct_conntrack_compare,\
     ctypes_ptr2uint, int16_to_uint16, int32_to_uint32
 from ctypes import create_string_buffer
 from socket import ntohs, ntohl, htons, htonl
@@ -154,16 +153,6 @@ class ConntrackEntry(EntryBase):
                self.orig_l4proto, self.orig_port_src)
         return hash(key)
 
-    def compare(self, other, use_layer3=True, use_layer4=True, use_mark=False):
-        flags = 0
-        if use_mark:
-            flags |= NFCT_MARK
-        cmp_struct = nfct_conntrack_compare_t(
-            None, flags, int(use_layer3), int(use_layer4))
-        return nfct_conntrack_compare(self._handle, other._handle, cmp_struct)
-
-    def __eq__(self, other):
-        return self.compare(other) == 0
 
 __all__ = ("ConntrackEntry",)
 
